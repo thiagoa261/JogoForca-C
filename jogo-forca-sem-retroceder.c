@@ -33,10 +33,12 @@ void desenha_corpo(int erros);
 void inicializar_pilha();
 void inserir_pilha(char letra_digitada);
 void exibe_pilha();
+void exibe_pilha2();
 int verifica_repeticao(char letra_digitada);
 int verifica_acerto(char palavra_passe[], int tamanho_palavra, char letra);
 void exibe_palavra_passe(char palavra_passe[], int tamanho_palavra);
 int verifica_vitoria(char palavra_passe[], int tamanho_palavra);
+char tentativa_cpu();
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
@@ -176,10 +178,66 @@ int main() {
         }
         
         else {
+            // recebendo a palavra secreta
+            char palavra_passe2[20];
+            printf ("\nDigite a palavra secreta: ");
+            scanf("%s", palavra_passe2);
+            
+            // mostra quantos caracteres tem a palavra palavra passe
+            int tamanho_palavra2 = strlen(palavra_passe2);
+            
+            limpatela();
             
             //////////////////////////////////////////////////////////////////////////////////
             //                              começando a jogar                              //
             
+            inicializar_pilha();
+            int quantidade_erros2 = 0; // chegando a 7 será a derrota
+            char letra2; // letras que a maquina vai gerar
+            
+            //while que roda até jogador perder ou ganhar
+            while(quantidade_erros2 < vidas && vitoria < 1) {   
+                limpatela();
+                
+                //função que desenha a pessoa baseado nos erros
+                desenha_corpo(quantidade_erros2); 
+                
+                // revela as letras da palavra passe
+                printf("Palavra secreta: ");
+                exibe_palavra_passe(palavra_passe2, tamanho_palavra2);
+                
+                //função que exibe as tentativas da maquina
+                exibe_pilha2();
+            
+                if (verifica_vitoria(palavra_passe2, tamanho_palavra2) < 1) { // só pede uma letra se ainda não tiver ganhado
+                    letra2 = tentativa_cpu();
+                
+                    // verifica se a letra ja foi digitada
+                    if(verifica_repeticao(letra2) == 1) {
+                        // se retornar 1 quer dizer que a letra já foi digitada
+                        printf("\nletra já utilizada! Aguarde!\n");
+                        sleep(1);
+                    }
+                    else {
+                        inserir_pilha(letra2);
+                        quantidade_jogadas++;
+                        
+                        // verifica se acertou 
+                        if(verifica_acerto(palavra_passe2, tamanho_palavra2, letra2) != 1) {
+                            // se retornar diferente de 1 o jogador errou e é contabilizado erro
+                            quantidade_erros2++;
+                        }
+                    }
+                }
+                sleep(2);
+            }
+            
+            if(vitoria == 1) {
+                printf("\n\nVITÓRIA a palavra era '%s'! O computador venceu de %s, o computador fez %d tentativas e teve %d erros.", palavra_passe2,jogador1,quantidade_jogadas,quantidade_erros2);
+            }
+            else {
+                printf("\n\nDERROTA a palavra era '%s'! O computador perdeu para %s, o computador fez %d tentativas e teve %d erros o máximo é 6.", palavra_passe2,jogador1,quantidade_jogadas,quantidade_erros2);
+            }    
         }
     }
     
@@ -291,6 +349,19 @@ void exibe_pilha() {
 	}
 }
 
+void exibe_pilha2() {
+    // função para exibir a pilha
+    // usada para as letras que o computador chutar
+    printf("\n\nLetras que o computador tentou: ");
+    aux = topo;
+	if(aux != NULL) {
+	    while(aux != NULL){
+	        printf("%c ", aux->letras);
+			aux = aux->prox;
+	    }
+	}
+}
+
 int verifica_repeticao(char letra_digitada) {
     // função que verifica se a letra digitada é repitida
     aux = topo;
@@ -361,6 +432,21 @@ int verifica_vitoria(char palavra_passe[], int tamanho_palavra) {
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
+
+char tentativa_cpu() {
+    // função que o cumputador 'chuta uma letra' para tentar acertar a palavra secreta
+    
+    // vetor com todas as letras
+    char v[26] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    
+    // gerando valor aleatorio de 0 a 25
+    srand(time(NULL));
+    int numero = rand() % 25;
+    
+    // retorna a letra na posição correspondente ao numero gerado
+    return v[numero];
+    
+}
 
 int verifica_acerto(char palavra_passe[], int tamanho_palavra, char letra) {
     int i = 0; // contador
@@ -469,4 +555,3 @@ void desenha_corpo(int erros) {
         printf("|               \n");
     }
 }
-
