@@ -216,7 +216,7 @@ int main() {
                     if(verifica_repeticao(letra2) == 1) {
                         // se retornar 1 quer dizer que a letra já foi digitada
                         printf("\nletra já utilizada! Aguarde!\n");
-                        sleep(1);
+                        sleep(1.2);
                     }
                     else {
                         inserir_pilha(letra2);
