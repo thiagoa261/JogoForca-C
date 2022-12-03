@@ -170,10 +170,10 @@ int main() {
                         
                         // ve o valor de topo na pilha 2 para saber se a letra foi um acerto ou erro
                         // 1 = acertou / 0 = errou
-                        int temporario = ve_topo();
+                        int temporario2 = ve_topo();
                         
                         // se a letra tinha sido um erro retirar na quantidade de erros 
-                        if(temporario == 0) {
+                        if(temporario2 == 0) {
                             quantidade_erros1--;
                         }
                         
