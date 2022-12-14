@@ -18,17 +18,18 @@
 // 1 = venceu
 int vitoria = 0;
 
-//Pilha que armazena jogadas / Variaveis úteis
+//Pilha que armazena jogadas 
 struct jogadas { 
 	char letras;
 	struct jogadas *prox;
 };
 typedef struct jogadas PILHA;
 PILHA *topo, *aux, *novo;
+
 int quantidade_jogadas = 0;
 
 //Pilha do certo ou errado
-// essa pilha serve para armazenar se cada letra digitada foi um acertoou erro
+// essa pilha serve para armazenar se cada letra digitada foi um acerto ou erro
 struct certo { 
 	int valor; // 1 = certo / 0 = errado
 	struct certo *prox2;
@@ -50,6 +51,7 @@ void exibe_palavra_passe(char palavra_passe[], int tamanho_palavra);
 int verifica_vitoria(char palavra_passe[], int tamanho_palavra);
 char tentativa_cpu();
 void retrocede_pilha();
+void retrocede_pilha2();
 int ve_topo();
 
 int main() {
@@ -170,12 +172,15 @@ int main() {
                         
                         // ve o valor de topo na pilha 2 para saber se a letra foi um acerto ou erro
                         // 1 = acertou / 0 = errou
-                        int temporario2 = ve_topo();
+                        int valor_temporario = ve_topo();
                         
                         // se a letra tinha sido um erro retirar na quantidade de erros 
-                        if(temporario2 == 0) {
+                        if(valor_temporario == 0) {
                             quantidade_erros1--;
                         }
+                        
+                        // exclui topo da segunda pilha que indica se a jogada foi um erro o acerto
+                        retrocede_pilha2();
                         
                         goto A2;
                         
@@ -338,11 +343,13 @@ int main() {
                     
                     // se a letra tinha sido um erro retirar na quantidade de erros 
                     if(temporario == 0) {
-                        quantidade_erros--;
+                        quantidade_erros = quantidade_erros - 1;   
                     }
                     
-                    goto A;
+                    // exclui topo da segunda pilha que indica se a jogada foi um erro o acerto
+                    retrocede_pilha2();
                     
+                    goto A;
                 }
             }
             
@@ -370,8 +377,8 @@ int main() {
                     }
                     
                     // verificando denovo para armazenar na segunda pilha 
-                    int valor = verifica_acerto(palavra_passe, tamanho_palavra, letra);
-                    inserir_pilha2(valor);
+                    int  valor_erro_acerto = verifica_acerto(palavra_passe, tamanho_palavra, letra);
+                    inserir_pilha2(valor_erro_acerto);
                 }
             }
         }
@@ -523,7 +530,6 @@ void inicializar_pilha2() {
 
 void inserir_pilha2(int valor_recebido) {
     // função para inserir na pilha de certo ou errado
-    
 	if(topo2 == NULL) {  // se for o primeiro elemento
 		topo2 = malloc(sizeof(PILHA2));
 		topo2->valor = valor_recebido;
@@ -543,12 +549,27 @@ int ve_topo() {
         // pilha vazia
     }
 	else {
-		aux2 = topo2->prox2;
+	    aux2 = topo2->prox2;
 		if(topo2->valor == 0) {
 		    return 0;
-		} 
+		}
+		else {
+		    return 1;
+		}
 	}
 	return 1;
+}
+
+void retrocede_pilha2() {
+    // função para excluir ultima jogada
+    if(topo2 == NULL) {
+        // pilha vazia
+    }
+	else {
+		aux2 = topo2->prox2;
+		free(topo2);
+		topo2 = aux2;
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 
